@@ -1,0 +1,1460 @@
+[
+  {
+    "time_step": 0,
+    "walle_position": [
+      1,
+      1
+    ],
+    "battery_level": 100.0,
+    "sensor_signal": 0.0383,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (7.05). Moving towards artifact clue clue_scrap_01 at (4, 2) to isolate EVE's coordinates.",
+    "entropy": 7.048,
+    "belief_target": [
+      13,
+      14
+    ],
+    "target_confidence": 0.0105,
+    "top_candidates": [
+      [
+        [
+          13,
+          14
+        ],
+        0.0105
+      ],
+      [
+        [
+          14,
+          13
+        ],
+        0.0105
+      ],
+      [
+        [
+          14,
+          14
+        ],
+        0.0105
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 1,
+    "walle_position": [
+      2,
+      1
+    ],
+    "battery_level": 98.0,
+    "sensor_signal": 0.0402,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "UP",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (6.75). Moving towards artifact clue clue_scrap_01 at (4, 2) to isolate EVE's coordinates.",
+    "entropy": 6.7526,
+    "belief_target": [
+      14,
+      14
+    ],
+    "target_confidence": 0.0144,
+    "top_candidates": [
+      [
+        [
+          14,
+          14
+        ],
+        0.0144
+      ],
+      [
+        [
+          13,
+          14
+        ],
+        0.0144
+      ],
+      [
+        [
+          14,
+          13
+        ],
+        0.0144
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 2,
+    "walle_position": [
+      2,
+      0
+    ],
+    "battery_level": 96.0,
+    "sensor_signal": 0.0393,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (6.59). Moving towards artifact clue clue_scrap_01 at (4, 2) to isolate EVE's coordinates.",
+    "entropy": 6.59,
+    "belief_target": [
+      13,
+      14
+    ],
+    "target_confidence": 0.0168,
+    "top_candidates": [
+      [
+        [
+          13,
+          14
+        ],
+        0.0168
+      ],
+      [
+        [
+          14,
+          13
+        ],
+        0.0168
+      ],
+      [
+        [
+          14,
+          14
+        ],
+        0.0168
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 3,
+    "walle_position": [
+      3,
+      0
+    ],
+    "battery_level": 94.0,
+    "sensor_signal": 0.0829,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "SCAN",
+    "direction": "NONE",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Within proximity (3 tiles) of unrecovered artifact at (4, 2). Emitting active radar pulse to acquire telemetry.",
+    "entropy": 6.6107,
+    "belief_target": [
+      14,
+      10
+    ],
+    "target_confidence": 0.0148,
+    "top_candidates": [
+      [
+        [
+          14,
+          10
+        ],
+        0.0148
+      ],
+      [
+        [
+          14,
+          9
+        ],
+        0.0148
+      ],
+      [
+        [
+          13,
+          11
+        ],
+        0.0147
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 4,
+    "walle_position": [
+      3,
+      0
+    ],
+    "battery_level": 88.0,
+    "sensor_signal": 0.0452,
+    "signal_mode": "ACTIVE_HIGH_PRECISION",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (5.40). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 5.3957,
+    "belief_target": [
+      14,
+      11
+    ],
+    "target_confidence": 0.0316,
+    "top_candidates": [
+      [
+        [
+          14,
+          11
+        ],
+        0.0316
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.0314
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.0313
+      ]
+    ],
+    "new_clues_found": [
+      "clue_scrap_01"
+    ]
+  },
+  {
+    "time_step": 5,
+    "walle_position": [
+      4,
+      0
+    ],
+    "battery_level": 86.0,
+    "sensor_signal": 0.0,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (5.23). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 5.2303,
+    "belief_target": [
+      12,
+      14
+    ],
+    "target_confidence": 0.039,
+    "top_candidates": [
+      [
+        [
+          12,
+          14
+        ],
+        0.039
+      ],
+      [
+        [
+          13,
+          14
+        ],
+        0.0388
+      ],
+      [
+        [
+          14,
+          13
+        ],
+        0.0388
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 6,
+    "walle_position": [
+      4,
+      1
+    ],
+    "battery_level": 84.0,
+    "sensor_signal": 0.0725,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (5.24). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 5.2359,
+    "belief_target": [
+      13,
+      13
+    ],
+    "target_confidence": 0.0371,
+    "top_candidates": [
+      [
+        [
+          13,
+          13
+        ],
+        0.0371
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.0371
+      ],
+      [
+        [
+          12,
+          14
+        ],
+        0.0371
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 7,
+    "walle_position": [
+      4,
+      2
+    ],
+    "battery_level": 82.0,
+    "sensor_signal": 0.0484,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (5.14). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 5.1439,
+    "belief_target": [
+      12,
+      14
+    ],
+    "target_confidence": 0.0409,
+    "top_candidates": [
+      [
+        [
+          12,
+          14
+        ],
+        0.0409
+      ],
+      [
+        [
+          13,
+          13
+        ],
+        0.0407
+      ],
+      [
+        [
+          14,
+          12
+        ],
+        0.0405
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 8,
+    "walle_position": [
+      4,
+      3
+    ],
+    "battery_level": 80.0,
+    "sensor_signal": 0.0575,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (5.05). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 5.0518,
+    "belief_target": [
+      12,
+      14
+    ],
+    "target_confidence": 0.0446,
+    "top_candidates": [
+      [
+        [
+          12,
+          14
+        ],
+        0.0446
+      ],
+      [
+        [
+          13,
+          13
+        ],
+        0.0443
+      ],
+      [
+        [
+          14,
+          12
+        ],
+        0.0441
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 9,
+    "walle_position": [
+      4,
+      4
+    ],
+    "battery_level": 78.0,
+    "sensor_signal": 0.0815,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (5.01). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 5.0139,
+    "belief_target": [
+      12,
+      14
+    ],
+    "target_confidence": 0.0449,
+    "top_candidates": [
+      [
+        [
+          12,
+          14
+        ],
+        0.0449
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.0448
+      ],
+      [
+        [
+          13,
+          13
+        ],
+        0.0448
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 10,
+    "walle_position": [
+      4,
+      5
+    ],
+    "battery_level": 76.0,
+    "sensor_signal": 0.0956,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (4.99). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 4.9884,
+    "belief_target": [
+      11,
+      14
+    ],
+    "target_confidence": 0.046,
+    "top_candidates": [
+      [
+        [
+          11,
+          14
+        ],
+        0.046
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.0448
+      ],
+      [
+        [
+          10,
+          14
+        ],
+        0.0445
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 11,
+    "walle_position": [
+      4,
+      6
+    ],
+    "battery_level": 74.0,
+    "sensor_signal": 0.1512,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (5.05). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 5.0504,
+    "belief_target": [
+      9,
+      14
+    ],
+    "target_confidence": 0.0502,
+    "top_candidates": [
+      [
+        [
+          9,
+          14
+        ],
+        0.0502
+      ],
+      [
+        [
+          8,
+          14
+        ],
+        0.0483
+      ],
+      [
+        [
+          10,
+          14
+        ],
+        0.047
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 12,
+    "walle_position": [
+      4,
+      7
+    ],
+    "battery_level": 72.0,
+    "sensor_signal": 0.1356,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (4.97). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 4.9722,
+    "belief_target": [
+      9,
+      14
+    ],
+    "target_confidence": 0.0593,
+    "top_candidates": [
+      [
+        [
+          9,
+          14
+        ],
+        0.0593
+      ],
+      [
+        [
+          8,
+          14
+        ],
+        0.0564
+      ],
+      [
+        [
+          10,
+          14
+        ],
+        0.0521
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 13,
+    "walle_position": [
+      4,
+      8
+    ],
+    "battery_level": 70.0,
+    "sensor_signal": 0.1183,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (4.89). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 4.8888,
+    "belief_target": [
+      10,
+      14
+    ],
+    "target_confidence": 0.0611,
+    "top_candidates": [
+      [
+        [
+          10,
+          14
+        ],
+        0.0611
+      ],
+      [
+        [
+          11,
+          13
+        ],
+        0.0587
+      ],
+      [
+        [
+          9,
+          14
+        ],
+        0.0583
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 14,
+    "walle_position": [
+      4,
+      9
+    ],
+    "battery_level": 68.0,
+    "sensor_signal": 0.0859,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (4.73). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.",
+    "entropy": 4.7291,
+    "belief_target": [
+      13,
+      11
+    ],
+    "target_confidence": 0.0593,
+    "top_candidates": [
+      [
+        [
+          13,
+          11
+        ],
+        0.0593
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.0591
+      ],
+      [
+        [
+          12,
+          12
+        ],
+        0.0588
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 15,
+    "walle_position": [
+      5,
+      9
+    ],
+    "battery_level": 66.0,
+    "sensor_signal": 0.0936,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "SCAN",
+    "direction": "NONE",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Within proximity (3 tiles) of unrecovered artifact at (8, 9). Emitting active radar pulse to acquire telemetry.",
+    "entropy": 4.4896,
+    "belief_target": [
+      13,
+      12
+    ],
+    "target_confidence": 0.0695,
+    "top_candidates": [
+      [
+        [
+          13,
+          12
+        ],
+        0.0695
+      ],
+      [
+        [
+          14,
+          10
+        ],
+        0.0694
+      ],
+      [
+        [
+          14,
+          11
+        ],
+        0.0662
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 16,
+    "walle_position": [
+      5,
+      9
+    ],
+    "battery_level": 60.0,
+    "sensor_signal": 0.1493,
+    "signal_mode": "ACTIVE_HIGH_PRECISION",
+    "action_executed": "MOVE",
+    "direction": "UP",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (3.50). Moving towards artifact clue clue_status_03 at (11, 7) to isolate EVE's coordinates.",
+    "entropy": 3.499,
+    "belief_target": [
+      13,
+      11
+    ],
+    "target_confidence": 0.1416,
+    "top_candidates": [
+      [
+        [
+          13,
+          11
+        ],
+        0.1416
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.1405
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.1176
+      ]
+    ],
+    "new_clues_found": [
+      "clue_telemetry_02"
+    ]
+  },
+  {
+    "time_step": 17,
+    "walle_position": [
+      5,
+      8
+    ],
+    "battery_level": 58.0,
+    "sensor_signal": 0.1961,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (3.61). Moving towards artifact clue clue_status_03 at (11, 7) to isolate EVE's coordinates.",
+    "entropy": 3.6096,
+    "belief_target": [
+      13,
+      11
+    ],
+    "target_confidence": 0.1266,
+    "top_candidates": [
+      [
+        [
+          13,
+          11
+        ],
+        0.1266
+      ],
+      [
+        [
+          13,
+          10
+        ],
+        0.1228
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.1211
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 18,
+    "walle_position": [
+      6,
+      8
+    ],
+    "battery_level": 56.0,
+    "sensor_signal": 0.1537,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (3.54). Moving towards artifact clue clue_status_03 at (11, 7) to isolate EVE's coordinates.",
+    "entropy": 3.5433,
+    "belief_target": [
+      13,
+      11
+    ],
+    "target_confidence": 0.134,
+    "top_candidates": [
+      [
+        [
+          13,
+          11
+        ],
+        0.134
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.1284
+      ],
+      [
+        [
+          13,
+          10
+        ],
+        0.1247
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 19,
+    "walle_position": [
+      7,
+      8
+    ],
+    "battery_level": 54.0,
+    "sensor_signal": 0.1707,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CLUE_INVESTIGATION",
+    "reasoning": "Entropy is elevated (3.41). Moving towards artifact clue clue_status_03 at (11, 7) to isolate EVE's coordinates.",
+    "entropy": 3.4113,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.1515,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.1515
+      ],
+      [
+        [
+          13,
+          11
+        ],
+        0.1473
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.1335
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 20,
+    "walle_position": [
+      8,
+      8
+    ],
+    "battery_level": 52.0,
+    "sensor_signal": 0.2301,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "RECHARGE",
+    "direction": "NONE",
+    "decision_mode": "RECHARGING_SOLAR",
+    "reasoning": "WALL-E is docked at Solar Station [8, 8]. Battery is 52.0%. Charging solar cells to full capacity.",
+    "entropy": 3.3305,
+    "belief_target": [
+      13,
+      11
+    ],
+    "target_confidence": 0.172,
+    "top_candidates": [
+      [
+        [
+          13,
+          11
+        ],
+        0.172
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.1536
+      ],
+      [
+        [
+          12,
+          12
+        ],
+        0.1272
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 21,
+    "walle_position": [
+      8,
+      8
+    ],
+    "battery_level": 82.0,
+    "sensor_signal": 0.1308,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "RECHARGE",
+    "direction": "NONE",
+    "decision_mode": "RECHARGING_SOLAR",
+    "reasoning": "WALL-E is docked at Solar Station [8, 8]. Battery is 82.0%. Charging solar cells to full capacity.",
+    "entropy": 2.7473,
+    "belief_target": [
+      11,
+      14
+    ],
+    "target_confidence": 0.2663,
+    "top_candidates": [
+      [
+        [
+          11,
+          14
+        ],
+        0.2663
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.254
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.1696
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 22,
+    "walle_position": [
+      8,
+      8
+    ],
+    "battery_level": 100.0,
+    "sensor_signal": 0.1879,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "SCAN",
+    "direction": "NONE",
+    "decision_mode": "ACTIVE_TRIANGULATION",
+    "reasoning": "Radio ambiguity detected across sectors (Entropy: 2.56). Firing active beacon radar to obtain low-noise sensor reading and eliminate false positives.",
+    "entropy": 2.5561,
+    "belief_target": [
+      11,
+      14
+    ],
+    "target_confidence": 0.301,
+    "top_candidates": [
+      [
+        [
+          11,
+          14
+        ],
+        0.301
+      ],
+      [
+        [
+          12,
+          13
+        ],
+        0.2738
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.1828
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 23,
+    "walle_position": [
+      8,
+      8
+    ],
+    "battery_level": 94.0,
+    "sensor_signal": 0.2133,
+    "signal_mode": "ACTIVE_HIGH_PRECISION",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CONVERGE_ON_EVE",
+    "reasoning": "High confidence localization achieved! Target: (12, 13) (P=33.2%, Entropy=2.48). Navigating DOWN along optimal A* trajectory.",
+    "entropy": 2.4814,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.332,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.332
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.2217
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.2117
+      ]
+    ],
+    "new_clues_found": [
+      "clue_status_03"
+    ]
+  },
+  {
+    "time_step": 24,
+    "walle_position": [
+      8,
+      9
+    ],
+    "battery_level": 92.0,
+    "sensor_signal": 0.2857,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "EXPLORATION_GRADIENT",
+    "reasoning": "Exploring along probability gradient towards candidate (12, 13) (Top candidate probability: 34.7%, Entropy: 2.56).",
+    "entropy": 2.5591,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.3473,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.3473
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.1914
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.1829
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 25,
+    "walle_position": [
+      8,
+      10
+    ],
+    "battery_level": 90.0,
+    "sensor_signal": 0.273,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CONVERGE_ON_EVE",
+    "reasoning": "High confidence localization achieved! Target: (12, 13) (P=38.1%, Entropy=2.35). Navigating DOWN along optimal A* trajectory.",
+    "entropy": 2.3507,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.3806,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.3806
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.2073
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.2004
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 26,
+    "walle_position": [
+      8,
+      11
+    ],
+    "battery_level": 88.0,
+    "sensor_signal": 0.3465,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CONVERGE_ON_EVE",
+    "reasoning": "High confidence localization achieved! Target: (12, 13) (P=49.1%, Entropy=1.94). Navigating DOWN along optimal A* trajectory.",
+    "entropy": 1.9399,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.4907,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.4907
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.277
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.112
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 27,
+    "walle_position": [
+      8,
+      12
+    ],
+    "battery_level": 86.0,
+    "sensor_signal": 0.3731,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "DOWN",
+    "decision_mode": "CONVERGE_ON_EVE",
+    "reasoning": "High confidence localization achieved! Target: (12, 13) (P=66.4%, Entropy=1.31). Navigating DOWN along optimal A* trajectory.",
+    "entropy": 1.3102,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.6641,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.6641
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.2583
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.0332
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 28,
+    "walle_position": [
+      8,
+      13
+    ],
+    "battery_level": 84.0,
+    "sensor_signal": 0.4125,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CONVERGE_ON_EVE",
+    "reasoning": "High confidence localization achieved! Target: (12, 13) (P=78.8%, Entropy=0.88). Navigating RIGHT along optimal A* trajectory.",
+    "entropy": 0.8778,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.7877,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.7877
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.1843
+      ],
+      [
+        [
+          12,
+          12
+        ],
+        0.026
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 29,
+    "walle_position": [
+      9,
+      13
+    ],
+    "battery_level": 82.0,
+    "sensor_signal": 0.4443,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CONVERGE_ON_EVE",
+    "reasoning": "High confidence localization achieved! Target: (12, 13) (P=95.1%, Entropy=0.29). Navigating RIGHT along optimal A* trajectory.",
+    "entropy": 0.2914,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.9511,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.9511
+      ],
+      [
+        [
+          12,
+          12
+        ],
+        0.0476
+      ],
+      [
+        [
+          13,
+          12
+        ],
+        0.0008
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 30,
+    "walle_position": [
+      10,
+      13
+    ],
+    "battery_level": 80.0,
+    "sensor_signal": 0.7032,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CONVERGE_ON_EVE",
+    "reasoning": "High confidence localization achieved! Target: (12, 13) (P=98.1%, Entropy=0.14). Navigating RIGHT along optimal A* trajectory.",
+    "entropy": 0.1391,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.9806,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.9806
+      ],
+      [
+        [
+          12,
+          12
+        ],
+        0.0193
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.0001
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 31,
+    "walle_position": [
+      11,
+      13
+    ],
+    "battery_level": 78.0,
+    "sensor_signal": 0.8027,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "MOVE",
+    "direction": "RIGHT",
+    "decision_mode": "CONVERGE_ON_EVE",
+    "reasoning": "High confidence localization achieved! Target: (12, 13) (P=94.2%, Entropy=0.32). Navigating RIGHT along optimal A* trajectory.",
+    "entropy": 0.3196,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.9422,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.9422
+      ],
+      [
+        [
+          12,
+          12
+        ],
+        0.0577
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.0001
+      ]
+    ],
+    "new_clues_found": []
+  },
+  {
+    "time_step": 32,
+    "walle_position": [
+      12,
+      13
+    ],
+    "battery_level": 76.0,
+    "sensor_signal": 0.869,
+    "signal_mode": "PASSIVE_BEACON",
+    "action_executed": "HALT",
+    "direction": "NONE",
+    "decision_mode": "MISSION_COMPLETE",
+    "reasoning": "Moved RIGHT to [12, 13]. SUCCESS: WALL-E has reached EVE!",
+    "entropy": 0.3196,
+    "belief_target": [
+      12,
+      13
+    ],
+    "target_confidence": 0.9422,
+    "top_candidates": [
+      [
+        [
+          12,
+          13
+        ],
+        0.9422
+      ],
+      [
+        [
+          12,
+          12
+        ],
+        0.0577
+      ],
+      [
+        [
+          11,
+          14
+        ],
+        0.0001
+      ]
+    ],
+    "new_clues_found": []
+  }
+]

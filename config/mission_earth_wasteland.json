@@ -1,0 +1,72 @@
+{
+  "mission_name": "WALL-E and EVE's Signal Exploration",
+  "map": {
+    "width": 15,
+    "height": 15,
+    "seed": 42,
+    "walle_start": [1, 1],
+    "eve_location": [12, 13],
+    "eve_initial_status": "Dormant Beacon Active",
+    "solar_recharge_stations": [
+      [2, 3],
+      [8, 8],
+      [13, 2]
+    ],
+    "obstacles": [
+      [3, 1], [3, 2], [3, 3], [3, 4],
+      [7, 5], [7, 6], [7, 7], [8, 5],
+      [10, 10], [10, 11], [11, 10],
+      [5, 11], [5, 12], [6, 12]
+    ]
+  },
+  "resource_budget": {
+    "initial_battery": 100.0,
+    "max_battery": 100.0,
+    "max_time_steps": 100,
+    "action_costs": {
+      "move": 2.0,
+      "scan": 6.0,
+      "wait": 0.5,
+      "recharge": -30.0
+    },
+    "critical_battery_threshold": 25.0
+  },
+  "sensors": {
+    "passive_signal_noise_std": 0.05,
+    "active_scan_range": 4,
+    "active_scan_noise_std": 0.02
+  },
+  "clues": [
+    {
+      "id": "clue_scrap_01",
+      "location": [4, 2],
+      "discovered": false,
+      "type": "directional_hint",
+      "data": {
+        "text": "EVE's directional thruster burn marks point towards Southeast quadrant (x >= 7, y >= 7).",
+        "spatial_filter": { "min_x": 7, "min_y": 7 }
+      }
+    },
+    {
+      "id": "clue_telemetry_02",
+      "location": [8, 9],
+      "discovered": false,
+      "type": "proximity_hint",
+      "data": {
+        "text": "Telemetry relay recovered. Direct ping confirms EVE is within radius of 6 units from [8, 9].",
+        "center": [8, 9],
+        "max_radius": 6.0
+      }
+    },
+    {
+      "id": "clue_status_03",
+      "location": [11, 7],
+      "discovered": false,
+      "type": "status_hint",
+      "data": {
+        "text": "Ion trail analysis confirms EVE is in low-power standby mode with active beacon.",
+        "eve_status": "Standby Mode / Beacon Active"
+      }
+    }
+  ]
+}

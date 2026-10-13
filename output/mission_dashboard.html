@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WALL-E & EVE: Autonomous Signal Localization Dashboard</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .grid-cell {
+      transition: all 0.15s ease-out;
+      aspect-ratio: 1 / 1;
+    }
+    .glow-agent {
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.7);
+    }
+    .glow-eve {
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.8);
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 lg:p-6 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 mb-6 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-2xl">
+          🤖
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-bold tracking-tight text-[var(--foreground)]">WALL-E & EVE's Signal</h1>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              Autonomous Exploration
+            </span>
+          </div>
+          <p class="text-[var(--muted-foreground)] text-xs mt-0.5">
+            Bayesian Spatial Filtering, Clue Disambiguation & Dynamic Resource Allocation
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="flex items-center gap-3">
+        <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-2 text-center">
+          <div class="text-xs text-[var(--muted-foreground)]">Step</div>
+          <div id="stat-step" class="text-base font-bold text-amber-500">0 / 32</div>
+        </div>
+        <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-2 text-center">
+          <div class="text-xs text-[var(--muted-foreground)]">Confidence</div>
+          <div id="stat-conf" class="text-base font-bold text-sky-400">1.1%</div>
+        </div>
+        <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl px-4 py-2 text-center">
+          <div class="text-xs text-[var(--muted-foreground)]">Entropy</div>
+          <div id="stat-entropy" class="text-base font-bold text-[var(--foreground)]">7.05 bits</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Grid Column (7 cols) -->
+    <section class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-xs font-semibold text-[var(--foreground)]">15×15 Environment Grid Map</div>
+          <button id="toggle-heatmap" class="px-3 py-1 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-amber-500/10 hover:text-amber-500 text-xs font-medium transition-all">
+            Toggle Heatmap Overlay
+          </button>
+        </div>
+
+        <!-- Grid Container -->
+        <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl p-3 shadow-inner">
+          <div id="tactical-grid" class="grid grid-cols-15 gap-1 w-full max-w-[530px] mx-auto aspect-square">
+            <!-- Dynamic 225 Cells -->
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="flex flex-wrap items-center justify-center gap-4 mt-4 text-xs text-[var(--muted-foreground)] pt-3 border-t border-[var(--border)]">
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-500 inline-block"></span> WALL-E (Agent)</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-sky-400 inline-block"></span> EVE (Target)</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-700/80 inline-block"></span> Solar Station</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-stone-700 inline-block"></span> Obstacle</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-purple-600/80 inline-block"></span> Clue Marker</div>
+          <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-500/20 inline-block"></span> Visited Path</div>
+        </div>
+      </div>
+
+      <!-- Playback Scrubber -->
+      <div class="mt-6 pt-4 border-t border-[var(--border)]">
+        <div class="flex items-center gap-4 mb-3">
+          <span class="text-xs font-medium text-[var(--muted-foreground)]">Timeline:</span>
+          <input type="range" id="scrubber" min="0" max="32" value="0" class="w-full accent-amber-500 cursor-pointer">
+          <span id="scrubber-label" class="text-xs font-mono font-bold text-amber-500 w-12 text-right">00/32</span>
+        </div>
+
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="flex items-center gap-2">
+            <button id="btn-first" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-amber-500/10 text-xs font-semibold">⏮ First</button>
+            <button id="btn-prev" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-amber-500/10 text-xs font-semibold">◀ Prev</button>
+            <button id="btn-play" class="px-4 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold transition-all">▶ Play</button>
+            <button id="btn-next" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-amber-500/10 text-xs font-semibold">Next ▶</button>
+            <button id="btn-last" class="px-3 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--background)] hover:bg-amber-500/10 text-xs font-semibold">⏭ End</button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-[var(--muted-foreground)]">Speed:</span>
+            <select id="speed-select" class="bg-[var(--background)] border border-[var(--border)] text-xs rounded-lg px-2 py-1 text-[var(--foreground)]">
+              <option value="500">0.5x</option>
+              <option value="250" selected>1.0x</option>
+              <option value="100">2.5x</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Telemetry Column (5 cols) -->
+    <section class="lg:col-span-5 flex flex-col gap-5">
+
+      <!-- Battery Status -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2 text-xs font-semibold text-[var(--foreground)]">
+            <span>🔋</span> Battery Reserve
+          </div>
+          <span id="batt-text" class="text-xs font-mono font-bold text-emerald-400">100.0%</span>
+        </div>
+        <div class="w-full h-3 bg-[var(--background)] rounded-full border border-[var(--border)] overflow-hidden p-0.5 mb-2">
+          <div id="batt-bar" class="h-full bg-emerald-500 rounded-full transition-all" style="width: 100%;"></div>
+        </div>
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground)]">
+          <span>Critical Cutoff: <strong class="text-rose-400">25.0%</strong></span>
+          <span id="batt-mode-label" class="text-emerald-400 font-medium">Status: HEALTHY</span>
+        </div>
+      </div>
+
+      <!-- Cognitive Reasoning & Action -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm flex-1">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--border)]">
+          <div class="flex items-center gap-2 text-xs font-semibold text-[var(--foreground)]">
+            <span>🧠</span> Agent Cognitive Reasoning
+          </div>
+          <span id="mode-badge" class="px-2 py-0.5 rounded text-xs font-mono font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
+            CLUE_INVESTIGATION
+          </span>
+        </div>
+
+        <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl p-3 mb-3">
+          <div class="text-xs uppercase text-[var(--muted-foreground)] font-semibold mb-1">Current Decision & Intent</div>
+          <p id="reasoning-text" class="text-xs font-mono text-[var(--foreground)] leading-relaxed min-h-[50px]">
+            Initializing agent...
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl p-2.5">
+            <span class="text-[var(--muted-foreground)] block">Sensor Signal</span>
+            <span id="signal-text" class="font-mono font-bold text-amber-400 text-xs">0.0383 (Passive)</span>
+          </div>
+          <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl p-2.5">
+            <span class="text-[var(--muted-foreground)] block">Executed Action</span>
+            <span id="action-text" class="font-mono font-bold text-emerald-400 text-xs">MOVE [RIGHT]</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discovered Clues -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-[var(--border)]">
+          <div class="flex items-center gap-2 text-xs font-semibold text-[var(--foreground)]">
+            <span>📜</span> Clues & Evidence Recovered
+          </div>
+          <span id="clue-counter" class="text-xs font-bold text-purple-400">0 / 3 Discovered</span>
+        </div>
+
+        <div class="flex flex-col gap-2 text-xs">
+          <div id="clue-card-1" class="border border-[var(--border)] bg-[var(--background)] rounded-xl p-2.5 opacity-40 transition-all">
+            <div class="flex items-center justify-between font-semibold">
+              <span>#1 Directional Burn Marks [4, 2]</span>
+              <span id="clue-tag-1" class="text-[var(--muted-foreground)]">UNREACHED</span>
+            </div>
+            <p class="text-[var(--muted-foreground)] text-xs mt-0.5">Constrains search space to Southeast quadrant (x ≥ 7, y ≥ 7).</p>
+          </div>
+
+          <div id="clue-card-2" class="border border-[var(--border)] bg-[var(--background)] rounded-xl p-2.5 opacity-40 transition-all">
+            <div class="flex items-center justify-between font-semibold">
+              <span>#2 Telemetry Relay [8, 9]</span>
+              <span id="clue-tag-2" class="text-[var(--muted-foreground)]">UNREACHED</span>
+            </div>
+            <p class="text-[var(--muted-foreground)] text-xs mt-0.5">Proximity ping: Confirms EVE is within radius of 6 units.</p>
+          </div>
+
+          <div id="clue-card-3" class="border border-[var(--border)] bg-[var(--background)] rounded-xl p-2.5 opacity-40 transition-all">
+            <div class="flex items-center justify-between font-semibold">
+              <span>#3 Ion Trail Residue [11, 7]</span>
+              <span id="clue-tag-3" class="text-[var(--muted-foreground)]">UNREACHED</span>
+            </div>
+            <p class="text-[var(--muted-foreground)] text-xs mt-0.5">Status verification: EVE is in low-power standby with active beacon.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    const traces = [{"time_step": 0, "walle_position": [1, 1], "battery_level": 100.0, "sensor_signal": 0.0383, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (7.05). Moving towards artifact clue clue_scrap_01 at (4, 2) to isolate EVE's coordinates.", "entropy": 7.048, "belief_target": [13, 14], "target_confidence": 0.0105, "top_candidates": [[[13, 14], 0.0105], [[14, 13], 0.0105], [[14, 14], 0.0105]], "new_clues_found": []}, {"time_step": 1, "walle_position": [2, 1], "battery_level": 98.0, "sensor_signal": 0.0402, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "UP", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (6.75). Moving towards artifact clue clue_scrap_01 at (4, 2) to isolate EVE's coordinates.", "entropy": 6.7526, "belief_target": [14, 14], "target_confidence": 0.0144, "top_candidates": [[[14, 14], 0.0144], [[13, 14], 0.0144], [[14, 13], 0.0144]], "new_clues_found": []}, {"time_step": 2, "walle_position": [2, 0], "battery_level": 96.0, "sensor_signal": 0.0393, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (6.59). Moving towards artifact clue clue_scrap_01 at (4, 2) to isolate EVE's coordinates.", "entropy": 6.59, "belief_target": [13, 14], "target_confidence": 0.0168, "top_candidates": [[[13, 14], 0.0168], [[14, 13], 0.0168], [[14, 14], 0.0168]], "new_clues_found": []}, {"time_step": 3, "walle_position": [3, 0], "battery_level": 94.0, "sensor_signal": 0.0829, "signal_mode": "PASSIVE_BEACON", "action_executed": "SCAN", "direction": "NONE", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Within proximity (3 tiles) of unrecovered artifact at (4, 2). Emitting active radar pulse to acquire telemetry.", "entropy": 6.6107, "belief_target": [14, 10], "target_confidence": 0.0148, "top_candidates": [[[14, 10], 0.0148], [[14, 9], 0.0148], [[13, 11], 0.0147]], "new_clues_found": []}, {"time_step": 4, "walle_position": [3, 0], "battery_level": 88.0, "sensor_signal": 0.0452, "signal_mode": "ACTIVE_HIGH_PRECISION", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (5.40). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 5.3957, "belief_target": [14, 11], "target_confidence": 0.0316, "top_candidates": [[[14, 11], 0.0316], [[13, 12], 0.0314], [[12, 13], 0.0313]], "new_clues_found": ["clue_scrap_01"]}, {"time_step": 5, "walle_position": [4, 0], "battery_level": 86.0, "sensor_signal": 0.0, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (5.23). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 5.2303, "belief_target": [12, 14], "target_confidence": 0.039, "top_candidates": [[[12, 14], 0.039], [[13, 14], 0.0388], [[14, 13], 0.0388]], "new_clues_found": []}, {"time_step": 6, "walle_position": [4, 1], "battery_level": 84.0, "sensor_signal": 0.0725, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (5.24). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 5.2359, "belief_target": [13, 13], "target_confidence": 0.0371, "top_candidates": [[[13, 13], 0.0371], [[11, 14], 0.0371], [[12, 14], 0.0371]], "new_clues_found": []}, {"time_step": 7, "walle_position": [4, 2], "battery_level": 82.0, "sensor_signal": 0.0484, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (5.14). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 5.1439, "belief_target": [12, 14], "target_confidence": 0.0409, "top_candidates": [[[12, 14], 0.0409], [[13, 13], 0.0407], [[14, 12], 0.0405]], "new_clues_found": []}, {"time_step": 8, "walle_position": [4, 3], "battery_level": 80.0, "sensor_signal": 0.0575, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (5.05). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 5.0518, "belief_target": [12, 14], "target_confidence": 0.0446, "top_candidates": [[[12, 14], 0.0446], [[13, 13], 0.0443], [[14, 12], 0.0441]], "new_clues_found": []}, {"time_step": 9, "walle_position": [4, 4], "battery_level": 78.0, "sensor_signal": 0.0815, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (5.01). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 5.0139, "belief_target": [12, 14], "target_confidence": 0.0449, "top_candidates": [[[12, 14], 0.0449], [[11, 14], 0.0448], [[13, 13], 0.0448]], "new_clues_found": []}, {"time_step": 10, "walle_position": [4, 5], "battery_level": 76.0, "sensor_signal": 0.0956, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (4.99). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 4.9884, "belief_target": [11, 14], "target_confidence": 0.046, "top_candidates": [[[11, 14], 0.046], [[12, 13], 0.0448], [[10, 14], 0.0445]], "new_clues_found": []}, {"time_step": 11, "walle_position": [4, 6], "battery_level": 74.0, "sensor_signal": 0.1512, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (5.05). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 5.0504, "belief_target": [9, 14], "target_confidence": 0.0502, "top_candidates": [[[9, 14], 0.0502], [[8, 14], 0.0483], [[10, 14], 0.047]], "new_clues_found": []}, {"time_step": 12, "walle_position": [4, 7], "battery_level": 72.0, "sensor_signal": 0.1356, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (4.97). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 4.9722, "belief_target": [9, 14], "target_confidence": 0.0593, "top_candidates": [[[9, 14], 0.0593], [[8, 14], 0.0564], [[10, 14], 0.0521]], "new_clues_found": []}, {"time_step": 13, "walle_position": [4, 8], "battery_level": 70.0, "sensor_signal": 0.1183, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (4.89). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 4.8888, "belief_target": [10, 14], "target_confidence": 0.0611, "top_candidates": [[[10, 14], 0.0611], [[11, 13], 0.0587], [[9, 14], 0.0583]], "new_clues_found": []}, {"time_step": 14, "walle_position": [4, 9], "battery_level": 68.0, "sensor_signal": 0.0859, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (4.73). Moving towards artifact clue clue_telemetry_02 at (8, 9) to isolate EVE's coordinates.", "entropy": 4.7291, "belief_target": [13, 11], "target_confidence": 0.0593, "top_candidates": [[[13, 11], 0.0593], [[12, 13], 0.0591], [[12, 12], 0.0588]], "new_clues_found": []}, {"time_step": 15, "walle_position": [5, 9], "battery_level": 66.0, "sensor_signal": 0.0936, "signal_mode": "PASSIVE_BEACON", "action_executed": "SCAN", "direction": "NONE", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Within proximity (3 tiles) of unrecovered artifact at (8, 9). Emitting active radar pulse to acquire telemetry.", "entropy": 4.4896, "belief_target": [13, 12], "target_confidence": 0.0695, "top_candidates": [[[13, 12], 0.0695], [[14, 10], 0.0694], [[14, 11], 0.0662]], "new_clues_found": []}, {"time_step": 16, "walle_position": [5, 9], "battery_level": 60.0, "sensor_signal": 0.1493, "signal_mode": "ACTIVE_HIGH_PRECISION", "action_executed": "MOVE", "direction": "UP", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (3.50). Moving towards artifact clue clue_status_03 at (11, 7) to isolate EVE's coordinates.", "entropy": 3.499, "belief_target": [13, 11], "target_confidence": 0.1416, "top_candidates": [[[13, 11], 0.1416], [[12, 13], 0.1405], [[13, 12], 0.1176]], "new_clues_found": ["clue_telemetry_02"]}, {"time_step": 17, "walle_position": [5, 8], "battery_level": 58.0, "sensor_signal": 0.1961, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (3.61). Moving towards artifact clue clue_status_03 at (11, 7) to isolate EVE's coordinates.", "entropy": 3.6096, "belief_target": [13, 11], "target_confidence": 0.1266, "top_candidates": [[[13, 11], 0.1266], [[13, 10], 0.1228], [[12, 13], 0.1211]], "new_clues_found": []}, {"time_step": 18, "walle_position": [6, 8], "battery_level": 56.0, "sensor_signal": 0.1537, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (3.54). Moving towards artifact clue clue_status_03 at (11, 7) to isolate EVE's coordinates.", "entropy": 3.5433, "belief_target": [13, 11], "target_confidence": 0.134, "top_candidates": [[[13, 11], 0.134], [[12, 13], 0.1284], [[13, 10], 0.1247]], "new_clues_found": []}, {"time_step": 19, "walle_position": [7, 8], "battery_level": 54.0, "sensor_signal": 0.1707, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CLUE_INVESTIGATION", "reasoning": "Entropy is elevated (3.41). Moving towards artifact clue clue_status_03 at (11, 7) to isolate EVE's coordinates.", "entropy": 3.4113, "belief_target": [12, 13], "target_confidence": 0.1515, "top_candidates": [[[12, 13], 0.1515], [[13, 11], 0.1473], [[11, 14], 0.1335]], "new_clues_found": []}, {"time_step": 20, "walle_position": [8, 8], "battery_level": 52.0, "sensor_signal": 0.2301, "signal_mode": "PASSIVE_BEACON", "action_executed": "RECHARGE", "direction": "NONE", "decision_mode": "RECHARGING_SOLAR", "reasoning": "WALL-E is docked at Solar Station [8, 8]. Battery is 52.0%. Charging solar cells to full capacity.", "entropy": 3.3305, "belief_target": [13, 11], "target_confidence": 0.172, "top_candidates": [[[13, 11], 0.172], [[12, 13], 0.1536], [[12, 12], 0.1272]], "new_clues_found": []}, {"time_step": 21, "walle_position": [8, 8], "battery_level": 82.0, "sensor_signal": 0.1308, "signal_mode": "PASSIVE_BEACON", "action_executed": "RECHARGE", "direction": "NONE", "decision_mode": "RECHARGING_SOLAR", "reasoning": "WALL-E is docked at Solar Station [8, 8]. Battery is 82.0%. Charging solar cells to full capacity.", "entropy": 2.7473, "belief_target": [11, 14], "target_confidence": 0.2663, "top_candidates": [[[11, 14], 0.2663], [[12, 13], 0.254], [[13, 12], 0.1696]], "new_clues_found": []}, {"time_step": 22, "walle_position": [8, 8], "battery_level": 100.0, "sensor_signal": 0.1879, "signal_mode": "PASSIVE_BEACON", "action_executed": "SCAN", "direction": "NONE", "decision_mode": "ACTIVE_TRIANGULATION", "reasoning": "Radio ambiguity detected across sectors (Entropy: 2.56). Firing active beacon radar to obtain low-noise sensor reading and eliminate false positives.", "entropy": 2.5561, "belief_target": [11, 14], "target_confidence": 0.301, "top_candidates": [[[11, 14], 0.301], [[12, 13], 0.2738], [[13, 12], 0.1828]], "new_clues_found": []}, {"time_step": 23, "walle_position": [8, 8], "battery_level": 94.0, "sensor_signal": 0.2133, "signal_mode": "ACTIVE_HIGH_PRECISION", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CONVERGE_ON_EVE", "reasoning": "High confidence localization achieved! Target: (12, 13) (P=33.2%, Entropy=2.48). Navigating DOWN along optimal A* trajectory.", "entropy": 2.4814, "belief_target": [12, 13], "target_confidence": 0.332, "top_candidates": [[[12, 13], 0.332], [[13, 12], 0.2217], [[11, 14], 0.2117]], "new_clues_found": ["clue_status_03"]}, {"time_step": 24, "walle_position": [8, 9], "battery_level": 92.0, "sensor_signal": 0.2857, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "EXPLORATION_GRADIENT", "reasoning": "Exploring along probability gradient towards candidate (12, 13) (Top candidate probability: 34.7%, Entropy: 2.56).", "entropy": 2.5591, "belief_target": [12, 13], "target_confidence": 0.3473, "top_candidates": [[[12, 13], 0.3473], [[13, 12], 0.1914], [[11, 14], 0.1829]], "new_clues_found": []}, {"time_step": 25, "walle_position": [8, 10], "battery_level": 90.0, "sensor_signal": 0.273, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CONVERGE_ON_EVE", "reasoning": "High confidence localization achieved! Target: (12, 13) (P=38.1%, Entropy=2.35). Navigating DOWN along optimal A* trajectory.", "entropy": 2.3507, "belief_target": [12, 13], "target_confidence": 0.3806, "top_candidates": [[[12, 13], 0.3806], [[13, 12], 0.2073], [[11, 14], 0.2004]], "new_clues_found": []}, {"time_step": 26, "walle_position": [8, 11], "battery_level": 88.0, "sensor_signal": 0.3465, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CONVERGE_ON_EVE", "reasoning": "High confidence localization achieved! Target: (12, 13) (P=49.1%, Entropy=1.94). Navigating DOWN along optimal A* trajectory.", "entropy": 1.9399, "belief_target": [12, 13], "target_confidence": 0.4907, "top_candidates": [[[12, 13], 0.4907], [[11, 14], 0.277], [[13, 12], 0.112]], "new_clues_found": []}, {"time_step": 27, "walle_position": [8, 12], "battery_level": 86.0, "sensor_signal": 0.3731, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "DOWN", "decision_mode": "CONVERGE_ON_EVE", "reasoning": "High confidence localization achieved! Target: (12, 13) (P=66.4%, Entropy=1.31). Navigating DOWN along optimal A* trajectory.", "entropy": 1.3102, "belief_target": [12, 13], "target_confidence": 0.6641, "top_candidates": [[[12, 13], 0.6641], [[11, 14], 0.2583], [[13, 12], 0.0332]], "new_clues_found": []}, {"time_step": 28, "walle_position": [8, 13], "battery_level": 84.0, "sensor_signal": 0.4125, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CONVERGE_ON_EVE", "reasoning": "High confidence localization achieved! Target: (12, 13) (P=78.8%, Entropy=0.88). Navigating RIGHT along optimal A* trajectory.", "entropy": 0.8778, "belief_target": [12, 13], "target_confidence": 0.7877, "top_candidates": [[[12, 13], 0.7877], [[11, 14], 0.1843], [[12, 12], 0.026]], "new_clues_found": []}, {"time_step": 29, "walle_position": [9, 13], "battery_level": 82.0, "sensor_signal": 0.4443, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CONVERGE_ON_EVE", "reasoning": "High confidence localization achieved! Target: (12, 13) (P=95.1%, Entropy=0.29). Navigating RIGHT along optimal A* trajectory.", "entropy": 0.2914, "belief_target": [12, 13], "target_confidence": 0.9511, "top_candidates": [[[12, 13], 0.9511], [[12, 12], 0.0476], [[13, 12], 0.0008]], "new_clues_found": []}, {"time_step": 30, "walle_position": [10, 13], "battery_level": 80.0, "sensor_signal": 0.7032, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CONVERGE_ON_EVE", "reasoning": "High confidence localization achieved! Target: (12, 13) (P=98.1%, Entropy=0.14). Navigating RIGHT along optimal A* trajectory.", "entropy": 0.1391, "belief_target": [12, 13], "target_confidence": 0.9806, "top_candidates": [[[12, 13], 0.9806], [[12, 12], 0.0193], [[11, 14], 0.0001]], "new_clues_found": []}, {"time_step": 31, "walle_position": [11, 13], "battery_level": 78.0, "sensor_signal": 0.8027, "signal_mode": "PASSIVE_BEACON", "action_executed": "MOVE", "direction": "RIGHT", "decision_mode": "CONVERGE_ON_EVE", "reasoning": "High confidence localization achieved! Target: (12, 13) (P=94.2%, Entropy=0.32). Navigating RIGHT along optimal A* trajectory.", "entropy": 0.3196, "belief_target": [12, 13], "target_confidence": 0.9422, "top_candidates": [[[12, 13], 0.9422], [[12, 12], 0.0577], [[11, 14], 0.0001]], "new_clues_found": []}, {"time_step": 32, "walle_position": [12, 13], "battery_level": 76.0, "sensor_signal": 0.869, "signal_mode": "PASSIVE_BEACON", "action_executed": "HALT", "direction": "NONE", "decision_mode": "MISSION_COMPLETE", "reasoning": "Moved RIGHT to [12, 13]. SUCCESS: WALL-E has reached EVE!", "entropy": 0.3196, "belief_target": [12, 13], "target_confidence": 0.9422, "top_candidates": [[[12, 13], 0.9422], [[12, 12], 0.0577], [[11, 14], 0.0001]], "new_clues_found": []}];
+    const config = {"mission_name": "WALL-E and EVE's Signal Exploration", "map": {"width": 15, "height": 15, "seed": 42, "walle_start": [1, 1], "eve_location": [12, 13], "eve_initial_status": "Dormant Beacon Active", "solar_recharge_stations": [[2, 3], [8, 8], [13, 2]], "obstacles": [[3, 1], [3, 2], [3, 3], [3, 4], [7, 5], [7, 6], [7, 7], [8, 5], [10, 10], [10, 11], [11, 10], [5, 11], [5, 12], [6, 12]]}, "resource_budget": {"initial_battery": 100.0, "max_battery": 100.0, "max_time_steps": 100, "action_costs": {"move": 2.0, "scan": 6.0, "wait": 0.5, "recharge": -30.0}, "critical_battery_threshold": 25.0}, "sensors": {"passive_signal_noise_std": 0.05, "active_scan_range": 4, "active_scan_noise_std": 0.02}, "clues": [{"id": "clue_scrap_01", "location": [4, 2], "discovered": false, "type": "directional_hint", "data": {"text": "EVE's directional thruster burn marks point towards Southeast quadrant (x >= 7, y >= 7).", "spatial_filter": {"min_x": 7, "min_y": 7}}}, {"id": "clue_telemetry_02", "location": [8, 9], "discovered": false, "type": "proximity_hint", "data": {"text": "Telemetry relay recovered. Direct ping confirms EVE is within radius of 6 units from [8, 9].", "center": [8, 9], "max_radius": 6.0}}, {"id": "clue_status_03", "location": [11, 7], "discovered": false, "type": "status_hint", "data": {"text": "Ion trail analysis confirms EVE is in low-power standby mode with active beacon.", "eve_status": "Standby Mode / Beacon Active"}}]};
+    const obstacles = new Set(config.map.obstacles.map(o => `${o[0]},${o[1]}`));
+    const solars = new Set(config.map.solar_recharge_stations.map(s => `${s[0]},${s[1]}`));
+    const evePos = config.map.eve_location;
+
+    let step = 0;
+    let isPlaying = false;
+    let timer = null;
+    let showHeatmap = false;
+
+    const grid = document.getElementById('tactical-grid');
+    const cells = new Map();
+
+    for (let y = 0; y < 15; y++) {
+      for (let x = 0; x < 15; x++) {
+        const c = document.createElement('div');
+        c.className = 'grid-cell rounded border border-[var(--border)]/30 flex items-center justify-center text-xs relative select-none';
+        const k = `${x},${y}`;
+        if (obstacles.has(k)) {
+          c.classList.add('bg-stone-800');
+          c.innerHTML = '<span class="text-stone-500 font-bold text-xs select-none">#</span>';
+        } else if (solars.has(k)) {
+          c.classList.add('bg-amber-950/40');
+          c.innerHTML = '<span class="text-amber-400 text-xs select-none">☀️</span>';
+        } else {
+          c.classList.add('bg-[var(--card)]');
+        }
+        c.title = `[${x}, ${y}]`;
+        grid.appendChild(c);
+        cells.set(k, c);
+      }
+    }
+
+    function render(i) {
+      step = i;
+      const t = traces[i];
+      document.getElementById('scrubber').value = i;
+      document.getElementById('scrubber-label').innerText = `${String(i).padStart(2, '0')}/${traces.length-1}`;
+      document.getElementById('stat-step').innerText = `${i} / ${traces.length-1}`;
+      document.getElementById('stat-conf').innerText = `${(t.target_confidence * 100).toFixed(1)}%`;
+      document.getElementById('stat-entropy').innerText = `${t.entropy.toFixed(2)} bits`;
+
+      // Battery
+      const batt = t.battery_level;
+      document.getElementById('batt-text').innerText = `${batt.toFixed(1)}%`;
+      const bBar = document.getElementById('batt-bar');
+      bBar.style.width = `${batt}%`;
+      bBar.className = (batt < 25) ? 'h-full bg-rose-500 rounded-full' : (batt < 50 ? 'h-full bg-amber-500 rounded-full' : 'h-full bg-emerald-500 rounded-full');
+      document.getElementById('batt-mode-label').innerText = batt < 25 ? 'Status: CRITICAL (RETREAT)' : (batt < 50 ? 'Status: CAUTION' : 'Status: HEALTHY');
+      document.getElementById('batt-mode-label').className = batt < 25 ? 'text-rose-400 font-bold' : (batt < 50 ? 'text-amber-400 font-medium' : 'text-emerald-400 font-medium');
+
+      // Cognitive
+      document.getElementById('mode-badge').innerText = t.decision_mode;
+      document.getElementById('reasoning-text').innerText = t.reasoning;
+      document.getElementById('signal-text').innerText = `${t.sensor_signal.toFixed(4)} (${t.signal_mode === 'ACTIVE_HIGH_PRECISION' ? 'Scan' : 'Passive'})`;
+      document.getElementById('action-text').innerText = `${t.action_executed} ${t.direction !== 'NONE' ? '[' + t.direction + ']' : ''}`;
+
+      // Clues
+      let c1 = false, c2 = false, c3 = false;
+      for (let s = 0; s <= i; s++) {
+        if (traces[s].new_clues_found.includes('clue_scrap_01')) c1 = true;
+        if (traces[s].new_clues_found.includes('clue_telemetry_02')) c2 = true;
+        if (traces[s].new_clues_found.includes('clue_status_03')) c3 = true;
+      }
+      updateClue('clue-card-1', 'clue-tag-1', c1);
+      updateClue('clue-card-2', 'clue-tag-2', c2);
+      updateClue('clue-card-3', 'clue-tag-3', c3);
+      document.getElementById('clue-counter').innerText = `${(c1?1:0)+(c2?1:0)+(c3?1:0)} / 3 Discovered`;
+
+      // Visited
+      const visited = new Set();
+      for (let s = 0; s <= i; s++) visited.add(`${traces[s].walle_position[0]},${traces[s].walle_position[1]}`);
+
+      for (let y = 0; y < 15; y++) {
+        for (let x = 0; x < 15; x++) {
+          const k = `${x},${y}`;
+          const el = cells.get(k);
+          if (obstacles.has(k)) continue;
+
+          el.className = 'grid-cell rounded border border-[var(--border)]/30 flex items-center justify-center text-xs relative select-none';
+          el.style.backgroundColor = '';
+
+          const isWalle = (x === t.walle_position[0] && y === t.walle_position[1]);
+          const isEve = (x === evePos[0] && y === evePos[1]);
+          const isTarget = (x === t.belief_target[0] && y === t.belief_target[1]);
+
+          if (isWalle) {
+            if (isEve && i === traces.length - 1) {
+              el.classList.add('bg-sky-500', 'glow-eve');
+              el.innerHTML = '<span class="text-sm select-none">❤️</span>';
+            } else {
+              el.classList.add('bg-amber-500', 'glow-agent', 'z-10');
+              el.innerHTML = '<span class="text-sm select-none">🤖</span>';
+            }
+          } else if (isEve && i === traces.length - 1) {
+            el.classList.add('bg-sky-400', 'glow-eve');
+            el.innerHTML = '<span class="text-sm select-none">🕊️</span>';
+          } else if (isTarget && t.target_confidence > 0.3) {
+            el.classList.add('border-sky-400', 'bg-sky-500/10');
+            el.innerHTML = '<span class="text-sky-400 font-bold text-xs select-none">🎯</span>';
+          } else if (solars.has(k)) {
+            el.classList.add('bg-amber-950/40');
+            el.innerHTML = '<span class="text-amber-400 text-xs select-none">☀️</span>';
+          } else if (visited.has(k)) {
+            el.classList.add('bg-sky-500/10');
+            el.innerHTML = '<span class="text-sky-400/60 font-bold select-none text-xs">·</span>';
+          } else {
+            el.classList.add('bg-[var(--card)]');
+            el.innerHTML = '';
+          }
+
+          if (showHeatmap && !isWalle) {
+            const dist = Math.sqrt((x - t.belief_target[0])**2 + (y - t.belief_target[1])**2);
+            if (dist < 4) {
+              const heat = Math.max(0, 1 - (dist / 4));
+              el.style.backgroundColor = `rgba(245, 158, 11, ${heat * 0.4})`;
+            }
+          }
+        }
+      }
+    }
+
+    function updateClue(cardId, tagId, unlocked) {
+      const card = document.getElementById(cardId);
+      const tag = document.getElementById(tagId);
+      if (unlocked) {
+        card.classList.remove('opacity-40');
+        card.classList.add('border-purple-500/50', 'bg-purple-950/20');
+        tag.innerText = 'DISCOVERED';
+        tag.className = 'text-purple-400 font-bold';
+      } else {
+        card.classList.add('opacity-40');
+        card.classList.remove('border-purple-500/50', 'bg-purple-950/20');
+        tag.innerText = 'UNREACHED';
+        tag.className = 'text-[var(--muted-foreground)]';
+      }
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      document.getElementById('btn-play').innerText = isPlaying ? '⏸ Pause' : '▶ Play';
+      if (isPlaying) {
+        const speed = parseInt(document.getElementById('speed-select').value);
+        timer = setInterval(() => {
+          if (step < traces.length - 1) render(step + 1);
+          else togglePlay();
+        }, speed);
+      } else {
+        clearInterval(timer);
+      }
+    }
+
+    document.getElementById('btn-play').addEventListener('click', togglePlay);
+    document.getElementById('scrubber').addEventListener('input', (e) => render(parseInt(e.target.value)));
+    document.getElementById('btn-prev').addEventListener('click', () => render(Math.max(0, step - 1)));
+    document.getElementById('btn-next').addEventListener('click', () => render(Math.min(traces.length - 1, step + 1)));
+    document.getElementById('btn-first').addEventListener('click', () => render(0));
+    document.getElementById('btn-last').addEventListener('click', () => render(traces.length - 1));
+    document.getElementById('toggle-heatmap').addEventListener('click', () => {
+      showHeatmap = !showHeatmap;
+      document.getElementById('toggle-heatmap').classList.toggle('bg-amber-500');
+      document.getElementById('toggle-heatmap').classList.toggle('text-slate-950');
+      render(step);
+    });
+
+    render(0);
+  </script>
+</body>
+</html>
