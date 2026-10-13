@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WALL-E: Signal Scout // Autonomous Exploration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: rgba(17, 24, 39, 0.55);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover: rgba(255, 255, 255, 0.12);
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.25);
+      --eve: #38bdf8;
+      --eve-glow: rgba(56, 189, 248, 0.3);
+      --green: #10b981;
+      --danger: #f43f5e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background-color: var(--bg);
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* MotionSlides Ambient Mesh Gradients */
+    .ambient-glow-1 {
+      position: fixed;
+      top: -20%;
+      left: 15%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .ambient-glow-2 {
+      position: fixed;
+      bottom: -10%;
+      right: 15%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.07) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .grid-backdrop {
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000 70%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* MotionSlides Glassmorphic Cards */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .glass-card:hover {
+      border-color: var(--card-hover);
+    }
+
+    /* Interactive Floating Pill Buttons */
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: #9ca3af;
+    }
+    .pill-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .pill-btn.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+    }
+
+    /* Keycap badging */
+    .keycap {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+
+    /* Smooth Canvas Frame */
+    .canvas-viewport {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #090d16;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 9999px; }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Backdrop Glows -->
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+  <div class="grid-backdrop"></div>
+
+  <!-- Main Showcase Container -->
+  <div class="relative z-10 w-full max-w-[1040px] flex flex-col gap-5">
+
+    <!-- Top Navigation Header -->
+    <header class="glass-card px-5 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3.5">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-xl shadow-inner">
+          🤖
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-sm font-bold tracking-tight text-white">WALL-E // SIGNAL SCOUT</h1>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              MISSION ACTIVE
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 font-medium">Autonomous Exploration & Bayesian Triangulation</p>
+        </div>
+      </div>
+
+      <!-- Segmented Mode Switcher & Audio Control -->
+      <div class="flex items-center gap-2.5">
+        <div class="p-1 rounded-full bg-slate-900/80 border border-white/[0.06] flex items-center gap-1">
+          <button id="btn-mode-manual" class="pill-btn active text-xs py-1 px-3.5">
+            🎮 Manual Play
+          </button>
+          <button id="btn-mode-auto" class="pill-btn text-xs py-1 px-3.5">
+            ⚡ Autonomous AI
+          </button>
+        </div>
+
+        <button id="btn-audio" class="pill-btn py-1.5 px-3 text-xs">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]" id="audio-indicator"></span>
+          <span>Audio</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Game Grid & Telemetry Stage -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+
+      <!-- LEFT: 15x15 Canvas & Controls (7 cols) -->
+      <div class="lg:col-span-7 flex flex-col gap-3">
+        <div class="glass-card p-4">
+          
+          <!-- Viewport Canvas -->
+          <div class="canvas-viewport mx-auto w-[460px] h-[460px] max-w-full aspect-square">
+            <canvas id="gameCanvas" width="460" height="460" class="block w-full h-full"></canvas>
+
+            <!-- Mission Accomplished / Game Over Modal Overlay -->
+            <div id="endModal" class="modal-backdrop" style="display: none;">
+              <div id="modalIcon" class="text-5xl mb-3">❤️</div>
+              <h2 id="modalTitle" class="text-xl font-bold text-white mb-1.5 tracking-tight">MISSION ACCOMPLISHED</h2>
+              <p id="modalDesc" class="text-xs text-slate-400 max-w-xs mb-5 font-mono leading-relaxed">
+                EVE located at target coordinates [12, 13].
+              </p>
+              <div class="flex gap-2.5">
+                <button id="btn-reset" class="pill-btn active px-4 py-2 text-xs font-bold">
+                  ↺ PLAY AGAIN
+                </button>
+                <button id="btn-export" class="pill-btn px-4 py-2 text-xs font-semibold">
+                  💾 EXPORT TRACE
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Floating Control Dock -->
+          <div class="mt-3.5 flex items-center justify-between px-1">
+            <div class="flex items-center gap-1.5 text-xs text-slate-400">
+              <span class="keycap">W A S D</span>
+              <span class="text-slate-500">•</span>
+              <span class="keycap">SPACE</span> Scan
+              <span class="text-slate-500">•</span>
+              <span class="keycap">R</span> Charge
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button id="btn-action-scan" class="pill-btn py-1.5 px-3 text-xs text-sky-400 border-sky-500/20 hover:border-sky-500/40">
+                📡 Scan (-6%)
+              </button>
+              <button id="btn-action-charge" class="pill-btn py-1.5 px-3 text-xs text-amber-400 border-amber-500/20 hover:border-amber-500/40">
+                ☀️ Charge (+30%)
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- RIGHT: Modern Glassmorphic Telemetry Deck (5 cols) -->
+      <div class="lg:col-span-5 flex flex-col gap-3.5">
+        
+        <!-- Energy Reserve Card -->
+        <div class="glass-card p-4">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-sm">🔋</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Solar Power Reserves</span>
+            </div>
+            <span id="txt-battery" class="font-mono text-sm font-bold text-emerald-400">100.0%</span>
+          </div>
+
+          <!-- Sleek Pill Progress Bar -->
+          <div class="w-full h-2.5 bg-slate-900/80 rounded-full border border-white/[0.06] overflow-hidden p-0.5 mb-2">
+            <div id="bar-battery" class="h-full bg-emerald-500 rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(16,185,129,0.5)]" style="width: 100%;"></div>
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-400 font-mono">
+            <span>Critical Cutoff: <strong class="text-rose-400">25.0%</strong></span>
+            <span id="txt-battery-status" class="text-emerald-400 font-semibold">STATUS: NOMINAL</span>
+          </div>
+        </div>
+
+        <!-- Beacon Signal Detector Card -->
+        <div class="glass-card p-4">
+          <div class="flex items-center justify-between mb-2.5">
+            <div class="flex items-center gap-2">
+              <span class="text-sm">📡</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Signal Detector</span>
+            </div>
+            <span id="pill-signal-mode" class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20">
+              PASSIVE PING
+            </span>
+          </div>
+
+          <div class="bg-slate-950/60 border border-white/[0.04] rounded-xl p-3 flex items-center gap-3.5 mb-2.5">
+            <div class="text-2xl font-bold font-mono text-amber-400 min-w-[70px]" id="txt-signal">
+              0.038
+            </div>
+            <div class="flex-1">
+              <div class="flex justify-between text-[10px] font-mono text-slate-500 mb-1">
+                <span>FAINT</span>
+                <span>PROXIMITY</span>
+                <span>LOCKED</span>
+              </div>
+              <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                <div id="bar-signal" class="h-full bg-amber-400 rounded-full transition-all duration-300 shadow-[0_0_10px_rgba(245,158,11,0.5)]" style="width: 4%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+            <label class="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
+              <input type="checkbox" id="chk-fog" checked class="accent-amber-500 rounded">
+              <span>Fog of War</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer hover:text-white transition-colors">
+              <input type="checkbox" id="chk-heat" class="accent-sky-500 rounded">
+              <span>Bayesian Heatmap</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Discovered Clues & Artifacts -->
+        <div class="glass-card p-4">
+          <div class="flex items-center justify-between mb-2.5 pb-2 border-b border-white/[0.06]">
+            <div class="flex items-center gap-2">
+              <span class="text-sm">📜</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Telemetry Clues</span>
+            </div>
+            <span id="txt-clue-progress" class="text-xs font-mono font-bold text-purple-400">0 / 3 FOUND</span>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <!-- Clue 1 -->
+            <div id="clue-card-1" class="bg-slate-950/50 border border-white/[0.05] rounded-xl p-2.5 opacity-35 transition-all">
+              <div class="flex items-center justify-between text-xs font-bold mb-0.5">
+                <span class="text-slate-200">#1 Directional Thrusters [4, 2]</span>
+                <span id="clue-tag-1" class="text-[10px] font-mono text-slate-500">LOCKED</span>
+              </div>
+              <p id="clue-desc-1" class="text-[11px] text-slate-400 font-mono">Constrains search to Southeast quadrant (x ≥ 7, y ≥ 7).</p>
+            </div>
+
+            <!-- Clue 2 -->
+            <div id="clue-card-2" class="bg-slate-950/50 border border-white/[0.05] rounded-xl p-2.5 opacity-35 transition-all">
+              <div class="flex items-center justify-between text-xs font-bold mb-0.5">
+                <span class="text-slate-200">#2 Telemetry Relay [8, 9]</span>
+                <span id="clue-tag-2" class="text-[10px] font-mono text-slate-500">LOCKED</span>
+              </div>
+              <p id="clue-desc-2" class="text-[11px] text-slate-400 font-mono">Confirms EVE is within radius 6 of [8, 9].</p>
+            </div>
+
+            <!-- Clue 3 -->
+            <div id="clue-card-3" class="bg-slate-950/50 border border-white/[0.05] rounded-xl p-2.5 opacity-35 transition-all">
+              <div class="flex items-center justify-between text-xs font-bold mb-0.5">
+                <span class="text-slate-200">#3 Ion Trail Sensor [11, 7]</span>
+                <span id="clue-tag-3" class="text-[10px] font-mono text-slate-500">LOCKED</span>
+              </div>
+              <p id="clue-desc-3" class="text-[11px] text-slate-400 font-mono">Status verified: Standby Mode with active beacon.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Event Stream -->
+        <div class="glass-card p-4 flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Event Stream</span>
+            <span id="txt-cycle" class="text-xs font-mono font-bold text-amber-400">Cycle: 0</span>
+          </div>
+          <div id="logStream" class="h-20 overflow-y-auto bg-slate-950/60 border border-white/[0.04] rounded-xl p-2.5 font-mono text-xs text-slate-300 leading-relaxed space-y-1">
+            <div class="text-slate-500">[INIT] System ready at starting coordinates [1, 1].</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // 1. GAME CONSTANTS & WORLD SETUP
+    // ============================================================
+    const GRID = 15;
+    const SIZE = 460;
+    const CELL = SIZE / GRID;
+
+    // Obstacles and Fuel Stations are fixed and ALWAYS visible
+    const OBSTACLES = new Set(["3,1","3,2","3,3","3,4","7,5","7,6","7,7","8,5","10,10","10,11","11,10","5,11","5,12","6,12"]);
+    const FUEL_STATIONS = [ [2, 3], [8, 8], [13, 2] ];
+    const EVE_TARGET = [12, 13];
+
+    const CLUES = [
+      { id: "clue_scrap_01", loc: [4, 2], found: false, desc: "Thrusters point to Southeast (x >= 7, y >= 7)!" },
+      { id: "clue_telemetry_02", loc: [8, 9], found: false, desc: "Direct ping: EVE within radius 6 of [8, 9]!" },
+      { id: "clue_status_03", loc: [11, 7], found: false, desc: "EVE verified: Standby Mode with active beacon!" }
+    ];
+
+    // Web Audio Synthesizer
+    let audioCtx = null;
+    let audioEnabled = true;
+
+    function beep(freq, type = 'sine', duration = 0.08, vol = 0.1) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    const sfx = {
+      step: () => beep(280, 'triangle', 0.05, 0.05),
+      scan: () => { beep(520, 'sine', 0.2, 0.1); setTimeout(() => beep(820, 'sine', 0.25, 0.08), 100); },
+      charge: () => { [260, 390, 520].forEach((f, i) => setTimeout(() => beep(f, 'sine', 0.12, 0.08), i * 80)); },
+      clue: () => { [660, 880, 1100].forEach((f, i) => setTimeout(() => beep(f, 'square', 0.08, 0.06), i * 90)); },
+      win: () => { [523, 659, 783, 1046].forEach((f, i) => setTimeout(() => beep(f, 'triangle', 0.2, 0.12), i * 140)); },
+      fail: () => { beep(180, 'sawtooth', 0.25, 0.12); setTimeout(() => beep(120, 'sawtooth', 0.4, 0.12), 200); }
+    };
+
+    // Game state
+    let walle = [1, 1];
+    let battery = 100.0;
+    let stepCount = 0;
+    let isGameOver = false;
+    let isAutoPlay = false;
+    let autoTimer = null;
+
+    const visited = new Set(["1,1"]);
+    const fogRevealed = new Set();
+    const rippleWaves = [];
+    const traces = [];
+
+    // Bayesian Belief Grid
+    let beliefMap = {};
+    function resetBelief() {
+      let count = 0;
+      for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) if (!OBSTACLES.has(`${x},${y}`)) count++;
+      }
+      for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+          beliefMap[`${x},${y}`] = OBSTACLES.has(`${x},${y}`) ? 0 : (1.0 / count);
+        }
+      }
+    }
+    resetBelief();
+
+    function revealFog(cx, cy, r = 2) {
+      for (let dy = -r; dy <= r; dy++) {
+        for (let dx = -r; dx <= r; dx++) {
+          const nx = cx + dx, ny = cy + dy;
+          if (nx >= 0 && nx < GRID && ny >= 0 && ny < GRID) fogRevealed.add(`${nx},${ny}`);
+        }
+      }
+    }
+    revealFog(walle[0], walle[1], 2);
+
+    function dist(a, b) {
+      return Math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2);
+    }
+
+    function readSignal(pos, isScan = false) {
+      const d = dist(pos, EVE_TARGET);
+      const base = 1.0 / (1.0 + (d / 3.0)**1.8);
+      const noise = (Math.random() - 0.5) * (isScan ? 0.02 : 0.06);
+      return Math.max(0.0, Math.min(1.0, base + noise));
+    }
+
+    function updateBayes(pos, signal, noise = 0.05) {
+      const v2 = 2 * (noise ** 2);
+      let total = 0;
+      for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+          const k = `${x},${y}`;
+          if (OBSTACLES.has(k)) continue;
+          const d = dist([x, y], pos);
+          const expSig = 1.0 / (1.0 + (d / 3.0)**1.8);
+          const res = signal - expSig;
+          beliefMap[k] = (beliefMap[k] || 0) * Math.exp(-(res**2) / v2);
+          total += beliefMap[k];
+        }
+      }
+      if (total > 0) {
+        for (let k in beliefMap) beliefMap[k] /= total;
+      }
+    }
+
+    function applyClue(id) {
+      if (id === "clue_scrap_01") {
+        for (let y = 0; y < GRID; y++) {
+          for (let x = 0; x < GRID; x++) if (x < 7 || y < 7) beliefMap[`${x},${y}`] = 0;
+        }
+      } else if (id === "clue_telemetry_02") {
+        for (let y = 0; y < GRID; y++) {
+          for (let x = 0; x < GRID; x++) if (dist([x, y], [8, 9]) > 6.0) beliefMap[`${x},${y}`] = 0;
+        }
+      }
+      let total = 0;
+      for (let k in beliefMap) total += beliefMap[k];
+      if (total > 0) {
+        for (let k in beliefMap) beliefMap[k] /= total;
+      }
+    }
+
+    function getMAP() {
+      let best = [0, 0], maxP = -1;
+      for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+          const k = `${x},${y}`;
+          if (beliefMap[k] > maxP) {
+            maxP = beliefMap[k];
+            best = [x, y];
+          }
+        }
+      }
+      return { coord: best, prob: maxP };
+    }
+
+    function logMsg(txt, color = "#cbd5e1") {
+      const el = document.getElementById('logStream');
+      const row = document.createElement('div');
+      row.style.color = color;
+      row.innerText = `[T${stepCount}] ${txt}`;
+      el.appendChild(row);
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function move(dx, dy) {
+      if (isGameOver) return;
+      const nx = walle[0] + dx;
+      const ny = walle[1] + dy;
+
+      if (nx < 0 || nx >= GRID || ny < 0 || ny >= GRID) return;
+      if (OBSTACLES.has(`${nx},${ny}`)) {
+        logMsg("Path blocked by scrap obstacle.", "#f59e0b");
+        return;
+      }
+
+      walle = [nx, ny];
+      battery = Math.max(0, battery - 2.0);
+      stepCount++;
+      visited.add(`${nx},${ny}`);
+      revealFog(nx, ny, 2);
+      sfx.step();
+
+      const sig = readSignal(walle, false);
+      updateBayes(walle, sig, 0.05);
+
+      logMsg(`Navigated to [${nx}, ${ny}]. Signal: ${sig.toFixed(3)}`);
+      recordStep("MOVE", `[${nx}, ${ny}]`);
+
+      checkArtifacts(false);
+      checkEnd();
+      updateHUD();
+    }
+
+    function scan() {
+      if (isGameOver) return;
+      if (battery < 6.0) {
+        logMsg("Insufficient energy for radar pulse.", "#f43f5e");
+        return;
+      }
+
+      battery = Math.max(0, battery - 6.0);
+      stepCount++;
+      sfx.scan();
+
+      rippleWaves.push({ x: walle[0], y: walle[1], r: 0, maxR: 4.5 });
+      revealFog(walle[0], walle[1], 4);
+
+      const highSig = readSignal(walle, true);
+      updateBayes(walle, highSig, 0.02);
+
+      logMsg(`Radar pulse emitted. Precision signal: ${highSig.toFixed(4)}`, "#38bdf8");
+      recordStep("SCAN", "Range 4");
+
+      checkArtifacts(true);
+      checkEnd();
+      updateHUD();
+    }
+
+    function recharge() {
+      if (isGameOver) return;
+      const onFuel = FUEL_STATIONS.some(s => s[0] === walle[0] && s[1] === walle[1]);
+      if (!onFuel) {
+        logMsg("Docking failed: Not at a Fuel Recharge Station.", "#f59e0b");
+        return;
+      }
+
+      battery = Math.min(100.0, battery + 30.0);
+      stepCount++;
+      sfx.charge();
+
+      logMsg("Docked with Solar Station. +30.0% replenished.", "#10b981");
+      recordStep("RECHARGE", "Fuel dock");
+      updateHUD();
+    }
+
+    function checkArtifacts(isScan) {
+      CLUES.forEach((c, i) => {
+        if (c.found) return;
+        const d = dist(walle, c.loc);
+        if (d === 0 || (isScan && d <= 4.0)) {
+          c.found = true;
+          sfx.clue();
+          applyClue(c.id);
+          logMsg(`EVIDENCE RECOVERED: ${c.desc}`, "#c084fc");
+
+          const card = document.getElementById(`clue-card-${i+1}`);
+          const tag = document.getElementById(`clue-tag-${i+1}`);
+          const desc = document.getElementById(`clue-desc-${i+1}`);
+          card.style.opacity = "1";
+          card.style.borderColor = "rgba(168, 85, 247, 0.4)";
+          card.style.background = "rgba(168, 85, 247, 0.08)";
+          tag.innerText = "DECRYPTED";
+          tag.style.color = "#c084fc";
+          desc.innerText = c.desc;
+        }
+      });
+      const count = CLUES.filter(c => c.found).length;
+      document.getElementById('txt-clue-progress').innerText = `${count} / 3 FOUND`;
+    }
+
+    function recordStep(action, note) {
+      const map = getMAP();
+      traces.push({
+        tick: stepCount,
+        pos: [...walle],
+        battery: battery,
+        action: action,
+        note: note,
+        signal: readSignal(walle),
+        mapCandidate: map.coord,
+        prob: map.prob
+      });
+    }
+
+    function checkEnd() {
+      if (walle[0] === EVE_TARGET[0] && walle[1] === EVE_TARGET[1]) {
+        isGameOver = true;
+        sfx.win();
+        if (autoTimer) clearInterval(autoTimer);
+        showEnd("❤️", "CONTACT ESTABLISHED!", `You successfully guided WALL-E to EVE with ${battery.toFixed(1)}% battery remaining in ${stepCount} cycles.`);
+        return;
+      }
+      if (battery <= 0) {
+        isGameOver = true;
+        sfx.fail();
+        if (autoTimer) clearInterval(autoTimer);
+        showEnd("💀", "POWER EXHAUSTION", "WALL-E was stranded in the wasteland with zero solar battery.");
+      }
+    }
+
+    function showEnd(icon, title, desc) {
+      document.getElementById('modalIcon').innerText = icon;
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDesc').innerText = desc;
+      document.getElementById('endModal').style.display = "flex";
+    }
+
+    function updateHUD() {
+      document.getElementById('txt-battery').innerText = `${battery.toFixed(1)}%`;
+      const bBar = document.getElementById('bar-battery');
+      bBar.style.width = `${battery}%`;
+      bBar.className = battery <= 25 ? 'h-full bg-rose-500 rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(244,63,94,0.6)]' :
+                       battery <= 50 ? 'h-full bg-amber-500 rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(245,158,11,0.5)]' :
+                                       'h-full bg-emerald-500 rounded-full transition-all duration-300 shadow-[0_0_12px_rgba(16,185,129,0.5)]';
+
+      const st = document.getElementById('txt-battery-status');
+      if (battery <= 25) { st.innerText = "WARNING: CRITICAL"; st.style.color = "var(--danger)"; }
+      else if (battery <= 50) { st.innerText = "CAUTION: LOW"; st.style.color = "var(--accent)"; }
+      else { st.innerText = "STATUS: NOMINAL"; st.style.color = "var(--green)"; }
+
+      const sig = readSignal(walle);
+      document.getElementById('txt-signal').innerText = sig.toFixed(3);
+      document.getElementById('bar-signal').style.width = `${sig * 100}%`;
+      document.getElementById('txt-cycle').innerText = `Cycle: ${stepCount}`;
+    }
+
+    // ============================================================
+    // 5. AUTONOMOUS AI CONTROLLER
+    // ============================================================
+    function aiTick() {
+      if (isGameOver) return;
+
+      const onFuel = FUEL_STATIONS.some(s => s[0] === walle[0] && s[1] === walle[1]);
+      if (onFuel && battery < 85.0) {
+        recharge();
+        return;
+      }
+
+      let nearestFuel = FUEL_STATIONS[0];
+      let minFuelDist = 999;
+      FUEL_STATIONS.forEach(s => {
+        const d = Math.abs(walle[0] - s[0]) + Math.abs(walle[1] - s[1]);
+        if (d < minFuelDist) { minFuelDist = d; nearestFuel = s; }
+      });
+
+      if (battery <= (minFuelDist * 2.0 + 20.0)) {
+        logMsg(`[AI SAFETY] Retreating to Fuel Station at [${nearestFuel.join(', ')}]`, "#f59e0b");
+        stepToward(nearestFuel);
+        return;
+      }
+
+      const hiddenClue = CLUES.find(c => !c.found);
+      if (hiddenClue && Math.random() < 0.6) {
+        if (dist(walle, hiddenClue.loc) <= 3 && Math.random() < 0.4) scan();
+        else stepToward(hiddenClue.loc);
+        return;
+      }
+
+      const map = getMAP();
+      if (dist(walle, map.coord) === 0) scan();
+      else stepToward(map.coord);
+    }
+
+    function stepToward(tgt) {
+      const dx = tgt[0] - walle[0];
+      const dy = tgt[1] - walle[1];
+      let moves = [];
+      if (Math.abs(dx) > Math.abs(dy)) {
+        moves = [ [Math.sign(dx), 0], [0, Math.sign(dy)], [0, -Math.sign(dy)], [-Math.sign(dx), 0] ];
+      } else {
+        moves = [ [0, Math.sign(dy)], [Math.sign(dx), 0], [-Math.sign(dx), 0], [0, -Math.sign(dy)] ];
+      }
+      for (let [mx, my] of moves) {
+        const nx = walle[0] + mx, ny = walle[1] + my;
+        if (nx >= 0 && nx < GRID && ny >= 0 && ny < GRID && !OBSTACLES.has(`${nx},${ny}`)) {
+          move(mx, my);
+          return;
+        }
+      }
+      scan();
+    }
+
+    // Mode Toggle Handlers
+    const btnManual = document.getElementById('btn-mode-manual');
+    const btnAuto = document.getElementById('btn-mode-auto');
+
+    function setManualMode() {
+      isAutoPlay = false;
+      btnManual.classList.add('active');
+      btnAuto.classList.remove('active');
+      logMsg("[MODE] Manual Scout controls engaged.", "#f59e0b");
+      if (autoTimer) clearInterval(autoTimer);
+    }
+
+    function setAutoMode() {
+      isAutoPlay = true;
+      btnAuto.classList.add('active');
+      btnManual.classList.remove('active');
+      logMsg("[MODE] Autonomous AI agent engaged.", "#38bdf8");
+      autoTimer = setInterval(aiTick, 280);
+    }
+
+    btnManual.addEventListener('click', setManualMode);
+    btnAuto.addEventListener('click', setAutoMode);
+
+    // ============================================================
+    // 6. CANVAS RENDERING ENGINE
+    // ============================================================
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const chkFog = document.getElementById('chk-fog');
+    const chkHeat = document.getElementById('chk-heat');
+
+    function drawWalleSprite(cx, cy) {
+      // 1. Treads
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(cx - 11, cy - 7, 5, 14);
+      ctx.fillRect(cx + 6, cy - 7, 5, 14);
+      ctx.fillStyle = "#475569";
+      for (let i = -5; i <= 5; i += 3) {
+        ctx.fillRect(cx - 11, cy + i, 5, 1);
+        ctx.fillRect(cx + 6, cy + i, 5, 1);
+      }
+
+      // 2. Chassis
+      ctx.fillStyle = "#d97706";
+      ctx.fillRect(cx - 6, cy - 6, 12, 12);
+      ctx.fillStyle = "#b45309";
+      ctx.fillRect(cx - 4, cy - 4, 8, 8);
+      ctx.fillStyle = "#1e3a8a";
+      ctx.fillRect(cx - 3, cy - 3, 6, 3); // solar cell
+
+      // 3. Binocular Eyes
+      ctx.fillStyle = "#475569";
+      ctx.fillRect(cx - 5, cy - 10, 10, 3);
+      ctx.fillStyle = "#f8fafc";
+      ctx.beginPath();
+      ctx.arc(cx - 4, cy - 11, 3.5, 0, Math.PI * 2);
+      ctx.arc(cx + 4, cy - 11, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Glowing Cyan Pupils
+      ctx.fillStyle = "#38bdf8";
+      ctx.beginPath();
+      ctx.arc(cx - 4, cy - 11, 1.8, 0, Math.PI * 2);
+      ctx.arc(cx + 4, cy - 11, 1.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawEveSprite(cx, cy) {
+      ctx.fillStyle = "#ffffff";
+      ctx.shadowColor = "rgba(56, 189, 248, 0.8)";
+      ctx.shadowBlur = 14;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, 7, 10, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      ctx.fillStyle = "#0284c7";
+      ctx.beginPath();
+      ctx.ellipse(cx, cy - 3, 4, 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#38bdf8";
+      ctx.fillRect(cx - 3, cy - 4, 6, 1.5);
+    }
+
+    function drawScrapObstacle(px, py) {
+      ctx.fillStyle = "#1e293b";
+      ctx.fillRect(px + 2, py + 2, CELL - 4, CELL - 4);
+      ctx.fillStyle = "#334155";
+      ctx.fillRect(px + 4, py + 4, CELL - 8, CELL - 8);
+
+      ctx.strokeStyle = "#475569";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(px + 4, py + 4);
+      ctx.lineTo(px + CELL - 4, py + CELL - 4);
+      ctx.stroke();
+
+      ctx.fillStyle = "#64748b";
+      ctx.fillRect(px + 3, py + 3, 2, 2);
+      ctx.fillRect(px + CELL - 5, py + 3, 2, 2);
+    }
+
+    function drawFuelStation(px, py) {
+      ctx.fillStyle = "#1e2230";
+      ctx.fillRect(px + 2, py + 2, CELL - 4, CELL - 4);
+      ctx.fillStyle = "rgba(217, 119, 6, 0.4)";
+      ctx.fillRect(px + 3, py + 3, CELL - 6, CELL - 6);
+      ctx.strokeStyle = "#f59e0b";
+      ctx.lineWidth = 1.2;
+      ctx.strokeRect(px + 3, py + 3, CELL - 6, CELL - 6);
+
+      ctx.fillStyle = "#fbbf24";
+      ctx.font = "bold 13px sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("⚡", px + CELL/2, py + CELL/2 + 4);
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, SIZE, SIZE);
+
+      // Grid Base
+      for (let y = 0; y < GRID; y++) {
+        for (let x = 0; x < GRID; x++) {
+          const px = x * CELL;
+          const py = y * CELL;
+          const k = `${x},${y}`;
+
+          const isObstacle = OBSTACLES.has(k);
+          const isFuel = FUEL_STATIONS.some(s => s[0] === x && s[1] === y);
+          const isClue = CLUES.some(c => c.loc[0] === x && c.loc[1] === y && c.found);
+          const isExplored = fogRevealed.has(k) || !chkFog.checked;
+
+          ctx.fillStyle = (x + y) % 2 === 0 ? "#080c14" : "#0a0f19";
+          ctx.fillRect(px, py, CELL, CELL);
+
+          // Heatmap Overlay
+          if (chkHeat.checked && !isObstacle) {
+            const p = beliefMap[k] || 0;
+            if (p > 0.01) {
+              const alpha = Math.min(0.65, p * 3.5);
+              ctx.fillStyle = `rgba(56, 189, 248, ${alpha})`;
+              ctx.fillRect(px, py, CELL, CELL);
+            }
+          }
+
+          // Visited breadcrumbs
+          if (visited.has(k) && isExplored) {
+            ctx.fillStyle = "rgba(56, 189, 248, 0.3)";
+            ctx.beginPath();
+            ctx.arc(px + CELL/2, py + CELL/2, 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // ALWAYS VISIBLE ENTITIES
+          if (isObstacle) drawScrapObstacle(px, py);
+          else if (isFuel) drawFuelStation(px, py);
+
+          // FOG OF WAR
+          if (chkFog.checked && !fogRevealed.has(k)) {
+            if (!isObstacle && !isFuel) {
+              ctx.fillStyle = "#04060a";
+              ctx.fillRect(px, py, CELL, CELL);
+            }
+          }
+
+          // Clue Artifact
+          if (isClue && isExplored) {
+            ctx.fillStyle = "#c084fc";
+            ctx.beginPath();
+            ctx.arc(px + CELL/2, py + CELL/2, 5.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 9px monospace";
+            ctx.textAlign = "center";
+            ctx.fillText("?", px + CELL/2, py + CELL/2 + 3);
+          }
+
+          ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+          ctx.strokeRect(px, py, CELL, CELL);
+        }
+      }
+
+      // Radar Sonar Ripples
+      for (let i = rippleWaves.length - 1; i >= 0; i--) {
+        const rip = rippleWaves[i];
+        rip.r += 0.25;
+        ctx.strokeStyle = `rgba(56, 189, 248, ${Math.max(0, 1 - rip.r / rip.maxR)})`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc((rip.x + 0.5) * CELL, (rip.y + 0.5) * CELL, rip.r * CELL, 0, Math.PI * 2);
+        ctx.stroke();
+        if (rip.r >= rip.maxR) rippleWaves.splice(i, 1);
+      }
+
+      // Target EVE
+      if (fogRevealed.has(`${EVE_TARGET[0]},${EVE_TARGET[1]}`) || !chkFog.checked) {
+        drawEveSprite(EVE_TARGET[0] * CELL + CELL/2, EVE_TARGET[1] * CELL + CELL/2);
+      }
+
+      // WALL-E Unit
+      drawWalleSprite(walle[0] * CELL + CELL/2, walle[1] * CELL + CELL/2);
+
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+
+    // ============================================================
+    // 7. INPUT LISTENERS & ACTIONS
+    // ============================================================
+    window.addEventListener('keydown', (e) => {
+      if (isAutoPlay) return;
+      switch (e.key.toLowerCase()) {
+        case 'arrowup':
+        case 'w': move(0, -1); break;
+        case 'arrowdown':
+        case 's': move(0, 1); break;
+        case 'arrowleft':
+        case 'a': move(-1, 0); break;
+        case 'arrowright':
+        case 'd': move(1, 0); break;
+        case ' ':
+        case 'spacebar': scan(); break;
+        case 'r': recharge(); break;
+      }
+    });
+
+    document.getElementById('btn-action-scan').addEventListener('click', scan);
+    document.getElementById('btn-action-charge').addEventListener('click', recharge);
+    document.getElementById('btn-audio').addEventListener('click', () => {
+      audioEnabled = !audioEnabled;
+      const ind = document.getElementById('audio-indicator');
+      ind.className = audioEnabled ? 'w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]' : 'w-2 h-2 rounded-full bg-rose-500';
+    });
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      walle = [1, 1];
+      battery = 100.0;
+      stepCount = 0;
+      isGameOver = false;
+      visited.clear();
+      visited.add("1,1");
+      fogRevealed.clear();
+      revealFog(1, 1, 2);
+      resetBelief();
+      CLUES.forEach(c => c.found = false);
+      for (let i = 1; i <= 3; i++) {
+        const c = document.getElementById(`clue-card-${i}`);
+        c.style.opacity = "0.35";
+        c.style.borderColor = "rgba(255, 255, 255, 0.05)";
+        c.style.background = "rgba(2, 6, 23, 0.5)";
+        const t = document.getElementById(`clue-tag-${i}`);
+        t.innerText = "LOCKED";
+        t.style.color = "#64748b";
+      }
+      document.getElementById('txt-clue-progress').innerText = "0 / 3 FOUND";
+      document.getElementById('logStream').innerHTML = '<div class="text-slate-500">[INIT] System ready at starting coordinates [1, 1].</div>';
+      document.getElementById('endModal').style.display = "none";
+      updateHUD();
+    });
+
+    document.getElementById('btn-export').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(traces, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `walle_signal_traces_${Date.now()}.json`;
+      a.click();
+    });
+
+    updateHUD();
+  </script>
+</body>
+</html>
