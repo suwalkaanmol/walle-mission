@@ -1,10 +1,38 @@
 # 🤖 Project: WALL-E and EVE's Signal
 > **Autonomous Cognitive Agent Exploration & Bayesian Triangulation in a Resource-Constrained Wasteland**
 
+[![GitHub Pages](https://img.shields.io/badge/Demo-Live%20on%20GitHub%20Pages-success?style=for-the-badge&logo=github)](https://suwalkaanmol.github.io/walle-mission/)
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-orange?style=for-the-badge)](LICENSE)
+
+👉 **Live Interactive Visualizer**: [https://suwalkaanmol.github.io/walle-mission/](https://suwalkaanmol.github.io/walle-mission/)  
+👉 **Source Code**: [https://github.com/suwalkaanmol/walle-mission](https://github.com/suwalkaanmol/walle-mission)
+
 ---
 
 ## 🌟 Overview
-This project implements an autonomous cognitive agent (**WALL-E**) designed to locate a lost companion (**EVE**) across an uncertain, obstacle-strewn environment. WALL-E operates under partial observability (Fog of War) and strict battery constraints, combining **Bayesian belief modeling**, **information-theoretic entropy reduction**, **A\* path planning**, and **fail-safe solar recharging**.
+
+This project implements an autonomous cognitive agent (**WALL-E**) designed to locate a lost companion (**EVE**) across an uncertain, obstacle-strewn wasteland environment. 
+
+WALL-E operates under **partial observability (Fog of War)** and strict **battery constraints**, combining:
+- **Bayesian Belief Modeling & Grid Updates**
+- **Information-Theoretic Shannon Entropy Reduction**
+- **A\* Path Planning with Obstacle Avoidance**
+- **Dynamic Fail-Safe Energy Reserves & Solar Recharging**
+
+---
+
+## 🎮 Interactive Web Visualizer
+
+You can inspect the entire mission step-by-step or run the simulation directly in your browser:
+
+👉 **[Launch Live Visualizer](https://suwalkaanmol.github.io/walle-mission/)**
+
+### Dashboard Features:
+* **Interactive Timeline Scrubber**: Step through tick-by-tick actions, decisions, and movement paths.
+* **Bayesian Probability Heatmap**: Watch uncertainty collapse in real-time as WALL-E gathers RF beacon samples and decrypts directional clues.
+* **Telemetry HUD**: Live battery meter, current entropy score (bits), coordinates, and cognitive internal thoughts.
+* **Fog of War & Radar Overlays**: Visual rendering of active sensor scans and terrain discovery.
 
 ---
 
@@ -12,6 +40,9 @@ This project implements an autonomous cognitive agent (**WALL-E**) designed to l
 
 ```
 walle_mission/
+├── index.html                         # Interactive Web Visualizer (GitHub Pages entry)
+├── walle_game.html                    # Standalone playable web app
+├── run_simulation.py                  # CLI simulation runner
 ├── config/
 │   └── mission_earth_wasteland.json   # Mission map, budget, clues, noise parameters
 ├── sim_env/
@@ -24,13 +55,11 @@ walle_mission/
 │   └── reporter.py                    # Structured trace logger & Markdown report generator
 ├── visualization/
 │   ├── ascii_renderer.py              # Terminal live visualization HUD
-│   └── html_dashboard.py              # Interactive HTML5 dashboard with timeline scrubber
-├── output/
-│   ├── mission_traces.json            # Step-by-step action, observation, reasoning logs
-│   ├── MISSION_REPORT.md              # Executive summary and localization metrics
-│   └── mission_dashboard.html         # Standalone web visualizer
-├── run_simulation.py                  # CLI simulation runner
-└── README.md                          # Full documentation
+│   └── html_dashboard.py              # Interactive HTML5 dashboard generator
+└── output/
+    ├── mission_traces.json            # Step-by-step action, observation, reasoning logs
+    ├── MISSION_REPORT.md              # Executive summary and localization metrics
+    └── mission_dashboard.html         # Generated simulation report visualizer
 ```
 
 ---
@@ -38,7 +67,7 @@ walle_mission/
 ## 🧮 Theoretical Formulation
 
 ### 1. Electromagnetic Beacon Decay Model
-The radio beacon emitted by EVE follows an empirical path-loss attenuation model with distance $d = \sqrt{(x - x_E)^2 + (y - y_E)^2}$:
+The radio beacon emitted by EVE follows an empirical path-loss attenuation model with Euclidean distance $d = \sqrt{(x - x_E)^2 + (y - y_E)^2}$:
 
 $$S(d) = \frac{1.0}{1.0 + \left(\frac{d}{3.0}\right)^{1.8}} + \mathcal{N}(0, \sigma^2)$$
 
@@ -53,12 +82,12 @@ $$P(\text{EVE} = (x, y) \mid S_{\text{obs}}) \propto \exp\left(-\frac{\left(S_{\
 When symbolic clues are discovered (e.g., directional vectors $x \ge 7, y \ge 7$ or proximity radii $d \le 6.0$), inconsistent coordinates are zeroed out and the distribution is re-normalized.
 
 ### 3. Shannon Entropy (Uncertainty Quantification)
-To mathematically measure how certain WALL-E is about EVE's position:
+To mathematically measure how certain WALL-E is about EVE's location:
 
 $$H = -\sum_{x, y} P(x, y) \log_2 P(x, y)$$
 
-* **Initial Entropy:** $\approx 7.72\text{ bits}$ (complete uniform ambiguity).
-* **Final Converged Entropy:** $\approx 0.32\text{ bits}$ ($>95\%$ uncertainty reduction).
+* **Initial Entropy:** $\approx 7.72\text{ bits}$ (complete uniform ambiguity across 225 grid cells).
+* **Final Converged Entropy:** $\approx 0.32\text{ bits}$ ($>95\%$ uncertainty reduction upon pinpointing target).
 
 ### 4. Dynamic Energy Safety Reserve
 At every tick, WALL-E calculates the Manhattan energy cost to reach the nearest solar station $S^*$:
@@ -106,10 +135,10 @@ If current battery $B \le E_{\text{safe}}$, the agent automatically overrides ex
 
 ---
 
-## 🚀 How to Run
+## 🚀 Running Locally
 
-### Requirements
-* Pure standard Python 3.8+ (no heavy external libraries required!).
+### Prerequisites
+* Python 3.8+ (Pure standard library — zero external dependencies needed to run the core simulation!)
 
 ### Execute with Live ASCII Terminal Stream
 ```bash
@@ -121,15 +150,23 @@ python run_simulation.py
 python run_simulation.py --no-live
 ```
 
-### Custom Configurations & Adjust Speed
+### Custom Configuration & Adjust Speed
 ```bash
 python run_simulation.py --config config/mission_earth_wasteland.json --delay 0.05
 ```
 
 ---
 
-## 📊 Deliverables & Results Summary
+## 📊 Deliverables & Results
 
-* **Execution Traces:** `output/mission_traces.json` (logs action, observation, probability distribution, and cognitive reasoning at every tick).
-* **Comprehensive Report:** `output/MISSION_REPORT.md` (summary statistics, telemetry artifacts recovered, energy analysis, and next steps).
-* **Interactive UI Dashboard:** Open `output/mission_dashboard.html` in any web browser to scrub through the steps, view battery levels, and watch the Bayesian heatmap evolve!
+* **Execution Traces:** `output/mission_traces.json` (action, observation, probability distribution, and cognitive reasoning at every tick).
+* **Comprehensive Report:** `output/MISSION_REPORT.md` (summary statistics, telemetry artifacts, energy consumption, and findings).
+* **Interactive Dashboard:** `index.html` (accessible online via GitHub Pages or opened locally in any browser).
+
+---
+
+## 👨‍💻 Author
+
+**Anmol Suwalka**  
+* GitHub: [@suwalkaanmol](https://github.com/suwalkaanmol)  
+* Project Repo: [walle-mission](https://github.com/suwalkaanmol/walle-mission)
